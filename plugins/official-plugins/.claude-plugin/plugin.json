@@ -1,0 +1,14 @@
+{
+  "name": "official-plugins",
+  "version": "0.1.0",
+  "description": "Official OKX hackathon tools — package any combination of skills, commands, agents, hooks, scripts, or MCP configs into a Claude Code plugin and submit it to the master-plugin-repository marketplace",
+  "author": {
+    "name": "mastersamasama",
+    "email": "mastersamasama@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/mastersamasama/master-plugin-repository",
+  "repository": "https://github.com/mastersamasama/master-plugin-repository",
+  "license": "See LICENSE — Proprietary OKX Internal Use Only",
+  "keywords": ["hackathon", "okx", "tooling", "internal", "official"],
+  "category": "development"
+}

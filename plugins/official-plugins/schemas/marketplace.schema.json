@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mastersamasama/master-plugin-repository/schemas/marketplace.schema.json",
+  "title": "Claude Code Marketplace",
+  "description": "Schema for .claude-plugin/marketplace.json. Verified against the real claude-plugins-official and claude-code-lsps marketplaces (cached at ~/.claude/plugins/marketplaces/).",
+  "type": "object",
+  "required": ["name", "owner", "plugins"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional URL of this schema for editor support"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Marketplace identifier in kebab-case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+",
+      "description": "Marketplace version (semver)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/pluginEntry" }
+    }
+  },
+  "definitions": {
+    "pluginEntry": {
+      "type": "object",
+      "required": ["name", "source"],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Plugin identifier (kebab-case). Must be unique within this marketplace."
+        },
+        "description": { "type": "string" },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+"
+        },
+        "author": {
+          "type": "object",
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "url": { "type": "string", "format": "uri" }
+          }
+        },
+        "category": {
+          "type": "string",
+          "description": "Free-form category tag (development, productivity, testing, data, other, etc.)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "homepage": { "type": "string", "format": "uri" },
+        "strict": { "type": "boolean" },
+        "source": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Relative path from marketplace root to a plugin directory in the same repo. Example: \"./plugins/foo\""
+            },
+            {
+              "type": "object",
+              "description": "Same-repo plugin via the long form (rarely used; the string form is preferred)",
+              "required": ["source", "url"],
+              "properties": {
+                "source": { "const": "url" },
+                "url": { "type": "string", "format": "uri" },
+                "sha": { "type": "string" }
+              }
+            },
+            {
+              "type": "object",
+              "description": "External repo subdirectory plugin",
+              "required": ["source", "url", "path"],
+              "properties": {
+                "source": { "const": "git-subdir" },
+                "url": { "type": "string", "description": "owner/repo shorthand or full git URL" },
+                "path": { "type": "string", "description": "Subdirectory path inside the external repo" },
+                "ref": { "type": "string", "description": "Branch or tag (default: main)" },
+                "sha": { "type": "string", "description": "Pinned commit SHA (recommended for reproducibility)" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

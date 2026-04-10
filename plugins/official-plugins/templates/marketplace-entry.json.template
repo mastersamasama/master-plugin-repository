@@ -1,0 +1,54 @@
+// Three ready-to-paste marketplace entry shapes for .claude-plugin/marketplace.json
+// Pick the one that matches your submission mode and remove the others.
+// Comments must be deleted before pasting (JSON does not allow them).
+
+// =====================================================================
+// SHAPE 1 — Monorepo (your plugin lives inside this repo at plugins/<name>/)
+// =====================================================================
+{
+  "name": "{{name}}",
+  "description": "{{description}}",
+  "version": "{{version}}",
+  "author": { "name": "{{author_name}}" },
+  "category": "{{category}}",
+  "keywords": {{keywords_json}},
+  "source": "./plugins/{{name}}"
+}
+
+// =====================================================================
+// SHAPE 2 — External whole-repo (your plugin IS its own GitHub repo,
+//           with .claude-plugin/plugin.json at the repo root)
+// =====================================================================
+{
+  "name": "{{name}}",
+  "description": "{{description}}",
+  "version": "{{version}}",
+  "author": { "name": "{{author_name}}" },
+  "category": "{{category}}",
+  "keywords": {{keywords_json}},
+  "source": {
+    "source": "url",
+    "url": "https://github.com/{{owner}}/{{repo}}.git",
+    "sha": "{{commit_sha}}"
+  }
+}
+
+// =====================================================================
+// SHAPE 3 — External subdir (your plugin lives in a subdirectory of a
+//           larger external repo)
+// =====================================================================
+{
+  "name": "{{name}}",
+  "description": "{{description}}",
+  "version": "{{version}}",
+  "author": { "name": "{{author_name}}" },
+  "category": "{{category}}",
+  "keywords": {{keywords_json}},
+  "source": {
+    "source": "git-subdir",
+    "url": "{{owner}}/{{repo}}",
+    "path": "plugins/{{subdir_name}}",
+    "ref": "main",
+    "sha": "{{commit_sha}}"
+  }
+}

@@ -1,0 +1,28 @@
+---
+name: {{skill_name}}
+description: This skill should be used when the user asks to "{{trigger_phrase_1}}", "{{trigger_phrase_2}}", "{{trigger_phrase_3}}", or {{additional_context}}. Make sure to invoke this skill whenever the user mentions {{topic}}, even if they don't explicitly ask for it.
+---
+
+# {{skill_title}}
+
+{{one_paragraph_summary}}
+
+## When to use
+
+{{when_section}}
+
+## Workflow
+
+1. {{step_1}}
+2. {{step_2}}
+3. {{step_3}}
+
+## Behavior rules
+
+- {{rule_1}}
+- {{rule_2}}
+
+## Related
+
+- See `references/` for detailed patterns
+- Run `/<plugin-name>:{{related_skill}}` next when {{related_condition}}

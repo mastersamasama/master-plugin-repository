@@ -1,0 +1,18 @@
+---
+description: {{command_description}}
+argument-hint: {{argument_hint}}
+---
+
+# /{{command_name}}
+
+{{command_body}}
+
+## Arguments
+
+{{arguments_section}}
+
+## Examples
+
+```
+/{{command_name}} {{example_args}}
+```

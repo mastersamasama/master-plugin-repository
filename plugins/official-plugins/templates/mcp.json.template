@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "{{server_name}}": {
+      "command": "npx",
+      "args": ["{{npm_package}}"],
+      "env": {}
+    }
+  }
+}

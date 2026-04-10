@@ -1,0 +1,9 @@
+{
+  "name": "multi-component-plugin",
+  "version": "0.1.0",
+  "description": "Reference plugin demonstrating how multiple component types (skill + command + agent + hook + script) coexist in one Claude Code plugin",
+  "author": { "name": "OKX hackathon example" },
+  "license": "See LICENSE",
+  "keywords": ["example", "reference", "multi-component"],
+  "category": "development"
+}

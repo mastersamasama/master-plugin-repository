@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mastersamasama/master-plugin-repository/schemas/skill-frontmatter.schema.json",
+  "title": "Claude Code SKILL.md Frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of every SKILL.md file. Only `name` is strictly required, but `description` is strongly recommended and should follow the third-person trigger-phrase convention.",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Skill identifier in kebab-case. Must match the leaf directory name (e.g., skills/my-skill/SKILL.md → name: my-skill)."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Trigger description. SHOULD start with \"This skill should be used when the user asks to ...\" and list concrete trigger phrases in quotes. Vague descriptions undertrigger."
+    },
+    "when": {
+      "type": "string",
+      "description": "Optional human-readable trigger context"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "private"],
+      "description": "Optional visibility flag"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+"
+    }
+  }
+}

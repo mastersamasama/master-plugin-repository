@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mastersamasama/master-plugin-repository/schemas/plugin.schema.json",
+  "title": "Claude Code Plugin Manifest",
+  "description": "Schema for .claude-plugin/plugin.json. Most fields are optional; only `name` is strictly required. Component directories (skills, commands, agents) are auto-discovered when not declared.",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Plugin identifier in kebab-case. Must match the leaf directory name."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+",
+      "description": "Semantic version"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "license": { "type": "string" },
+    "homepage": { "type": "string", "format": "uri" },
+    "repository": { "type": "string" },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "category": { "type": "string" },
+    "skills": {
+      "oneOf": [
+        { "type": "string", "description": "Path to a directory containing <skill-name>/SKILL.md subdirs, e.g. \"./skills/\"" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "commands": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "agents": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "hooks": {
+      "oneOf": [
+        { "type": "string", "description": "Path to a hooks.json file" },
+        { "type": "object", "description": "Inline hooks configuration" }
+      ]
+    },
+    "mcpServers": {
+      "oneOf": [
+        { "type": "string", "description": "Path to a JSON file with MCP server configs" },
+        { "type": "object", "description": "Inline MCP server configurations keyed by name" }
+      ]
+    },
+    "lspServers": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ]
+    }
+  }
+}

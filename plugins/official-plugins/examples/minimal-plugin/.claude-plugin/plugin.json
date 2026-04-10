@@ -1,0 +1,9 @@
+{
+  "name": "minimal-plugin",
+  "version": "0.1.0",
+  "description": "The smallest possible Claude Code plugin — one trivial skill, no commands, no agents",
+  "author": { "name": "OKX hackathon example" },
+  "license": "See LICENSE",
+  "keywords": ["example", "minimal"],
+  "category": "development"
+}

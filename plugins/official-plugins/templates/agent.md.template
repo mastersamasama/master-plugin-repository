@@ -1,0 +1,24 @@
+---
+name: {{agent_name}}
+description: {{agent_description}}
+tools: {{tools_list}}
+model: {{model}}
+---
+
+# {{agent_title}}
+
+You are {{agent_role}}.
+
+## Responsibilities
+
+- {{responsibility_1}}
+- {{responsibility_2}}
+
+## Constraints
+
+- {{constraint_1}}
+- {{constraint_2}}
+
+## Output format
+
+{{output_format}}

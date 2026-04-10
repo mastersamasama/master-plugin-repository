@@ -1,0 +1,25 @@
+# {{name}}
+
+{{description}}
+
+> Submitted to the OKX internal Claude Code plugin marketplace at `mastersamasama/master-plugin-repository`.
+
+## Install
+
+```
+/plugin marketplace add mastersamasama/master-plugin-repository
+/plugin install {{name}}@master-plugin-repository
+/reload-plugins
+```
+
+## What's inside
+
+{{components_summary}}
+
+## Author
+
+{{author_name}}
+
+## License
+
+See [LICENSE](../../LICENSE) — proprietary OKX internal use only.

@@ -1,6 +1,6 @@
 ---
 name: submit-plugin
-description: Submit a Claude Code plugin to the OKX internal master-plugin-repository marketplace via a GitHub PR. Runs inline sanity checks, then forks, branches, edits marketplace.json, and opens the PR through the gh CLI.
+description: This skill should be used when the user asks to "submit my plugin", "publish my plugin", "open a PR for my plugin", "register my plugin", or wants to add a plugin to the OKX internal master-plugin-repository marketplace via a GitHub PR. This is the bootstrap submit skill that ships in test-plugin and is superseded by /official-plugins:submit-plugin once the official plugin is installed. Make sure to invoke this whenever the user mentions submitting or publishing a plugin and only test-plugin is installed.
 when: When the user wants to submit, publish, upload, or add a plugin to master-plugin-repository or the OKX hackathon plugin marketplace.
 ---
 
