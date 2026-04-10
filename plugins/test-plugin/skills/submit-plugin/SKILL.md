@@ -93,79 +93,119 @@ gh auth status
 
 You need the participant's plugin repo to already be pushed to GitHub.
 
-1. Ask:
-   - `source.repo` — e.g. `team-alpha/my-plugin`
-   - `source.ref` — optional git ref (branch or tag). Default: `main`.
-2. Verify the repo is accessible: `gh repo view <source.repo>` — if it fails, stop and tell the user to push their repo or fix access.
-3. Pick a working directory for the marketplace fork. Default: a new temp dir like `%TEMP%/master-plugin-repository-submit-<plugin-name>` (Windows) or `/tmp/master-plugin-repository-submit-<plugin-name>` (unix). Confirm with user.
-4. Fork + clone:
+First, ask the participant **which layout** their repo uses. Use AskUserQuestion with two options:
+
+- **whole-repo** — "The entire repo IS my plugin (`.claude-plugin/plugin.json` is at the repo root)."
+- **subdir** — "My plugin lives in a subdirectory of a larger repo (e.g., `plugins/my-plugin/.claude-plugin/plugin.json`)."
+
+Based on the answer, collect the fields you'll need:
+
+**Whole-repo fields:**
+- `url` — full HTTPS git URL, e.g., `https://github.com/team-alpha/my-plugin.git`
+- `sha` — **required** for reproducibility. Ask the participant to run `git rev-parse HEAD` inside their plugin repo and paste the result.
+
+**Subdir fields:**
+- `url` — owner/repo shorthand (e.g., `team-alpha/monorepo`) **or** full HTTPS git URL
+- `path` — directory path inside that repo (e.g., `plugins/my-plugin`)
+- `ref` — branch or tag. Default: `main`.
+- `sha` — **required**. Ask participant to run `git rev-parse HEAD` on the branch/tag they want pinned.
+
+After collecting:
+
+1. Verify the repo is accessible by trying a plain `git ls-remote <url>` (no auth needed for public repos). If it fails, stop and tell the user to make the repo accessible first.
+2. Pick a working directory for the marketplace fork. Default: `%TEMP%/master-plugin-repository-submit-<plugin-name>` (Windows) or `/tmp/master-plugin-repository-submit-<plugin-name>` (unix). Confirm with user.
+3. Fork + clone:
    ```bash
    gh repo fork mastersamasama/master-plugin-repository --clone --remote
    ```
    (Run this **inside** the chosen working directory's parent; gh creates the fork under the authenticated user and clones it.)
-5. `cd` into the cloned fork.
-6. Create a branch: `git checkout -b submit/<plugin-name>`
-7. Read `.claude-plugin/marketplace.json`. Parse it. Append a new entry to the `plugins` array:
+4. `cd` into the cloned fork.
+5. Create a branch: `git checkout -b submit/<plugin-name>`
+6. Read `.claude-plugin/marketplace.json`. Parse it as JSON. Append a new entry to the `plugins` array.
+
+   **If whole-repo**, the entry is:
    ```json
    {
      "name": "<plugin-name>",
      "description": "<description>",
      "version": "<version>",
      "author": { "name": "<author.name>" },
+     "category": "<category-or-omit>",
      "keywords": [...],
      "source": {
-       "source": "github",
-       "repo": "<source.repo>",
-       "ref": "<source.ref>"
+       "source": "url",
+       "url": "<url>",
+       "sha": "<sha>"
      }
    }
    ```
-   Write the file back with 2-space indentation and a trailing newline. Preserve the existing formatting style.
-8. Stage + commit:
+
+   **If subdir**, the entry is:
+   ```json
+   {
+     "name": "<plugin-name>",
+     "description": "<description>",
+     "version": "<version>",
+     "author": { "name": "<author.name>" },
+     "category": "<category-or-omit>",
+     "keywords": [...],
+     "source": {
+       "source": "git-subdir",
+       "url": "<url>",
+       "path": "<path>",
+       "ref": "<ref>",
+       "sha": "<sha>"
+     }
+   }
+   ```
+
+   Write the file back with 2-space indentation and a trailing newline. Preserve the existing formatting style. **Before writing**, show the user the diff and get explicit confirmation.
+
+7. Stage + commit:
    ```bash
    git add .claude-plugin/marketplace.json
    git commit -m "Add <plugin-name> to marketplace"
    ```
-9. Push: `git push -u origin submit/<plugin-name>`
-10. Open PR:
-    ```bash
-    gh pr create \
-      --repo mastersamasama/master-plugin-repository \
-      --base main \
-      --head <your-github-username>:submit/<plugin-name> \
-      --title "Add <plugin-name> to marketplace" \
-      --body "<body>"
-    ```
-    Body should include: plugin name, description, submission mode (external), source repo + ref, author, and a note that CI does not yet exist (Phase A) so the reviewer will check manually.
+8. Push: `git push -u origin submit/<plugin-name>`
+9. Open PR:
+   ```bash
+   gh pr create \
+     --repo mastersamasama/master-plugin-repository \
+     --base main \
+     --head <your-github-username>:submit/<plugin-name> \
+     --title "Add <plugin-name> to marketplace" \
+     --body "<body>"
+   ```
+   Body should include: plugin name, description, submission mode (external, whole-repo or subdir), source url / path / ref / sha, author, and a note that CI does not yet exist (Phase A) so the reviewer will check manually.
 
 ### 5b. Mode: **monorepo**
 
-1. Pick working directory, fork + clone, and create branch `submit/<plugin-name>` — same as steps 3–6 above.
+In monorepo mode, the plugin is copied into this marketplace repo itself, and the marketplace entry's `source` is a **simple relative-path string** (not an object).
+
+1. Pick working directory, fork + clone, and create branch `submit/<plugin-name>` — same as steps 2–5 above.
 2. Copy the participant's plugin directory into the clone:
    - Destination: `<clone>/plugins/<plugin-name>/`
    - Use `cp -r` (Unix) or `xcopy /E /I /Y` (Windows). Confirm with user before copying.
-   - Refuse to proceed if `plugins/<plugin-name>/` already exists in the fork — that means a name collision; tell the user to rename their plugin.
-3. Read `.claude-plugin/marketplace.json`, append a new entry:
+   - Refuse to proceed if `plugins/<plugin-name>/` already exists in the fork — that's a name collision; tell the user to rename their plugin.
+3. Read `.claude-plugin/marketplace.json`, append a new entry. **Note the `source` is a string, not an object:**
    ```json
    {
      "name": "<plugin-name>",
      "description": "<description>",
      "version": "<version>",
      "author": { "name": "<author.name>" },
+     "category": "<category-or-omit>",
      "keywords": [...],
-     "source": {
-       "source": "github",
-       "repo": "mastersamasama/master-plugin-repository",
-       "path": "./plugins/<plugin-name>"
-     }
+     "source": "./plugins/<plugin-name>"
    }
    ```
+   Before writing, show the user the diff and get explicit confirmation.
 4. Stage all new files under `plugins/<plugin-name>/` **and** the marketplace.json edit:
    ```bash
    git add plugins/<plugin-name> .claude-plugin/marketplace.json
    git commit -m "Add <plugin-name> plugin and marketplace entry"
    ```
-5. Push and open PR — same as step 9–10 above, with submission mode **monorepo** in the body.
+5. Push and open PR — same as step 8–9 above, with submission mode **monorepo** in the body.
 
 ## 6. Report
 

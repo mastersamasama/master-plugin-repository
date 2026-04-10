@@ -1,10 +1,11 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "master-plugin-repository",
-  "description": "OKX internal Claude Code plugin marketplace for hackathon submissions",
   "version": "0.1.0",
-  "author": {
+  "description": "OKX internal Claude Code plugin marketplace for hackathon submissions",
+  "owner": {
     "name": "mastersamasama",
-    "url": "https://github.com/mastersamasama"
+    "email": "mastersamasama@users.noreply.github.com"
   },
   "plugins": [
     {
@@ -12,12 +13,9 @@
       "description": "Bootstrap plugin — contains submit-plugin skill used to onboard real plugins into the marketplace",
       "version": "0.1.0",
       "author": { "name": "mastersamasama" },
+      "category": "development",
       "keywords": ["bootstrap", "internal", "okx", "hackathon"],
-      "source": {
-        "source": "github",
-        "repo": "mastersamasama/master-plugin-repository",
-        "path": "./plugins/test-plugin"
-      }
+      "source": "./plugins/test-plugin"
     }
   ]
 }
