@@ -99,7 +99,23 @@ A reviewer checks the PR template checkboxes (no secrets, license compliance, va
 /plugin install <your-plugin-name>@master-plugin-repository
 ```
 
-> **Even shorter**: see [`plugins/official-plugins/QUICKSTART.md`](./plugins/official-plugins/QUICKSTART.md) for the 60-second condensed version, or [`plugins/official-plugins/README.md`](./plugins/official-plugins/README.md) for the full per-skill reference.
+### Alternative: Zip upload (no GitHub needed)
+
+**Don't know GitHub? No problem.** After Step 2 (package-plugin), skip submit-plugin entirely. Instead, ask Claude to zip your plugin:
+
+```
+Please zip my plugin directory into a file
+```
+
+Claude will create a `.zip` for you. Then upload it (plus your Demo recording/link) to the [submission form](https://okg-block.sg.larksuite.com/share/base/form/shrlg8ofWhLJotSJdkIaQy9PxMg). That's it — no GitHub account, no PR, no `gh` CLI.
+
+**What the zip must contain:**
+- `README.md` that mentions your project name and explains how to run it
+- Complete runnable code (`npm install && npm run start` or equivalent)
+
+> **Detailed hackathon info**: see [HACKATHON.md](./HACKATHON.md) ([简体中文版](./HACKATHON.zh-Hans.md)) for prizes, timeline, judging criteria, and full FAQ.
+>
+> **Even shorter**: see [`plugins/official-plugins/QUICKSTART.md`](./plugins/official-plugins/QUICKSTART.md) for the 60-second condensed version.
 
 ## What `submit-plugin` blocks on
 

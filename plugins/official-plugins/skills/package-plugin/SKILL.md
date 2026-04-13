@@ -142,13 +142,27 @@ Plugin packaged at <target>
   - hooks: yes/no
   - mcp servers: yes/no
   - validator: clean
-
-Next step:
-  /official-plugins:submit-plugin
-  When prompted for the plugin path, provide: <target>
 ```
 
-Do NOT call submit-plugin yourself. Tell the participant to invoke it explicitly so they're in control of the externally-visible action.
+Then ask (AskUserQuestion, single select): **"How would you like to submit?"**
+
+- **GitHub PR (recommended if you have GitHub)** — "Run `/official-plugins:submit-plugin` next. It will validate your plugin under strict mode, fork master-plugin-repository, and open a PR automatically."
+- **Zip upload (no GitHub needed)** — "I'll create a zip of your plugin directory for you. Upload it to the submission form along with your Demo."
+
+If participant picks **GitHub PR**: print the submit-plugin command and tell them to provide `<target>` when prompted. Do NOT call submit-plugin yourself — the participant must invoke it explicitly so they're in control.
+
+If participant picks **Zip upload**:
+1. Run via Bash: `cd <target-parent> && zip -r <plugin-name>.zip <plugin-name>/` (on Windows: use `powershell -c "Compress-Archive -Path '<target>' -DestinationPath '<target>.zip'"`)
+2. Print the path to the created `.zip` file
+3. Tell the participant:
+   ```
+   Your plugin is zipped at: <path-to-zip>
+
+   Upload it to the submission form:
+   https://okg-block.sg.larksuite.com/share/base/form/shrlg8ofWhLJotSJdkIaQy9PxMg
+
+   Don't forget to also upload your Demo (screen recording or online link)!
+   ```
 
 ## Behavior rules
 
