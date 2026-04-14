@@ -28,7 +28,7 @@
     {
       "name": "onchain-redpacket",
       "description": "Onchain red packet agent — create USDC/OKB/SOL red packets on XLayer & Solana and share via link, powered by OKX Agentic Wallet",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "oker"
       },
@@ -46,7 +46,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/li-zoe-x/onchain-redpacket.git",
-        "sha": "f76da1b06cea00dd921eb9bbcc5c4a6ad9b7f4ec"
+        "sha": "c824279794b26959d659f6ee0cfbf443df76698d"
       }
     },
     {
