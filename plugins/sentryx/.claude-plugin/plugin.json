@@ -1,0 +1,14 @@
+{
+  "name": "sentryx",
+  "version": "2.0.0",
+  "description": "Your AI-Powered Onchain Security & Alpha Guardian — auto-scans approvals, detects rug pulls, guards your portfolio, trades safely, hunts alpha signals, and runs a bidirectional x402 signal marketplace across EVM and Solana via Onchain OS.",
+  "author": {
+    "name": "shuaishuai.si",
+    "email": "shuaishuai.si@okg.com"
+  },
+  "homepage": "https://github.com/mastersamasama/master-plugin-repository",
+  "repository": "https://github.com/mastersamasama/master-plugin-repository",
+  "license": "See LICENSE",
+  "keywords": ["security", "wallet", "defi", "onchain-os", "agent", "agentic-wallet", "alpha", "trading", "x402", "signals"],
+  "category": "other"
+}

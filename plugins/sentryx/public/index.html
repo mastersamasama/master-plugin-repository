@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentryX — Alpha & Security Guardian</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0f1117',
+            card: '#1a1d26',
+            border: '#2a2d36',
+            accent: '#3b82f6',
+            green: '#22c55e',
+            red: '#ef4444',
+            yellow: '#eab308',
+            purple: '#a855f7',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0f1117; font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace; font-size: 14px; }
+
+    /* Pulse animation for scan dot */
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* Toast slide-in from right */
+    .toast { animation: slideInRight 0.3s ease, fadeOut 0.5s ease 3.5s forwards; }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Activity items slide-in from left */
+    .activity-item { animation: slideInLeft 0.3s ease; }
+    @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Fade out */
+    @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+    /* Spinner */
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scan progress bar gradient animation */
+    @keyframes scan-progress-bar {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .scan-progress-animated {
+      background: linear-gradient(90deg, #3b82f6, #a855f7, #22c55e, #3b82f6);
+      background-size: 300% 100%;
+      animation: scan-progress-bar 3s ease infinite;
+    }
+
+    /* Signal card hover */
+    .signal-card { transition: all 0.3s ease; }
+    .signal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(59,130,246,0.1); }
+
+    /* Button loading state */
+    .btn-loading { pointer-events: none; opacity: 0.6; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1d26; }
+    ::-webkit-scrollbar-thumb { background: #2a2d36; border-radius: 3px; }
+  </style>
+</head>
+<body class="text-gray-300 min-h-screen">
+
+  <!-- ============================================================ -->
+  <!-- LOGIN OVERLAY                                                 -->
+  <!-- ============================================================ -->
+  <div id="login-overlay" class="fixed inset-0 z-40 bg-bg flex items-center justify-center">
+    <div class="w-full max-w-sm mx-4">
+      <!-- Logo + Tagline -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-white">SentryX</h1>
+        <p class="text-xs text-gray-500 mt-1" data-i18n="tagline">Alpha & Security Guardian</p>
+      </div>
+
+      <!-- Login Card -->
+      <div class="bg-card rounded-xl border border-border p-6">
+        <!-- Step 1: Email + Connect Wallet -->
+        <div id="login-step1">
+          <label class="text-xs text-gray-400 block mb-1" data-i18n="email">Email</label>
+          <input id="login-email" type="email" placeholder="you@example.com"
+            class="w-full bg-bg border border-border rounded px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent mb-3">
+          <button id="btn-login-step1" onclick="loginStep1()"
+            class="w-full px-4 py-2 bg-accent text-white rounded-lg text-sm hover:bg-blue-600 transition" data-i18n="connectWallet">
+            Connect Wallet
+          </button>
+        </div>
+
+        <!-- Step 2: OTP Verify (hidden until step 1 succeeds) -->
+        <div id="login-step2" class="hidden">
+          <p class="text-xs text-gray-500 mb-2"><span data-i18n="otpSentTo">OTP sent to</span> <span id="login-email-display" class="text-gray-300"></span></p>
+          <input id="login-code" type="text" placeholder="Enter verification code"
+            class="w-full bg-bg border border-border rounded px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent mb-3">
+          <button id="btn-login-step2" onclick="loginStep2()"
+            class="w-full px-4 py-2 bg-accent text-white rounded-lg text-sm hover:bg-blue-600 transition" data-i18n="verify">
+            Verify
+          </button>
+        </div>
+
+        <!-- Error display -->
+        <p id="login-error" class="text-red text-xs mt-2 hidden"></p>
+      </div>
+
+      <!-- Footer -->
+      <p class="text-center text-xs text-gray-600 mt-6" data-i18n="poweredBy">Powered by TEE Agentic Wallet</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DASHBOARD (hidden until logged in)                            -->
+  <!-- ============================================================ -->
+  <div id="dashboard" class="hidden">
+
+    <!-- DEMO Badge (fixed top-right, hidden unless demo mode) -->
+    <div id="demo-badge" class="fixed top-2 right-2 z-50 bg-yellow text-black text-xs font-bold px-2 py-0.5 rounded hidden">
+      DEMO
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 max-w-sm"></div>
+
+    <!-- ======================================================== -->
+    <!-- HEADER                                                     -->
+    <!-- ======================================================== -->
+    <header class="bg-card border-b border-border px-4 py-2 flex items-center justify-between gap-3">
+      <!-- Left: Logo + ScanStatus -->
+      <div class="flex items-center gap-3">
+        <h1 class="text-base font-bold text-white">SentryX</h1>
+        <span id="scan-indicator" class="w-2 h-2 rounded-full bg-gray-600 inline-block"></span>
+        <span id="scan-status" class="text-sm text-gray-500">Idle</span>
+        <span id="scan-count" class="text-xs text-gray-600 hidden">0 scans</span>
+      </div>
+
+      <!-- Center: KPI metrics -->
+      <div class="flex items-center gap-4 text-sm">
+        <div class="text-center">
+          <div id="kpi-signals" class="text-white font-bold">0</div>
+          <div class="text-gray-500 text-xs" data-i18n="signals">Signals</div>
+        </div>
+        <div class="text-center">
+          <div id="kpi-trades" class="text-white font-bold">0</div>
+          <div class="text-gray-500 text-xs" data-i18n="trades">Trades</div>
+        </div>
+        <div class="text-center">
+          <div id="kpi-winrate" class="text-white font-bold">—</div>
+          <div class="text-gray-500 text-xs" data-i18n="winRate">Win %</div>
+        </div>
+        <div class="text-center">
+          <div id="kpi-pnl" class="text-white font-bold">$0</div>
+          <div class="text-gray-500 text-xs" data-i18n="pnl">PnL</div>
+        </div>
+      </div>
+
+      <!-- Right: Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="btn-start" onclick="startStrategy()"
+          class="px-3 py-1.5 bg-accent text-white rounded text-xs hover:bg-blue-600 transition">Start</button>
+        <button id="btn-stop" onclick="stopStrategy()"
+          class="px-3 py-1.5 bg-gray-700 text-gray-300 rounded text-xs hover:bg-gray-600 transition hidden">Stop</button>
+        <button id="btn-report" onclick="showReport()"
+          class="px-3 py-1.5 bg-gray-700 text-gray-300 rounded text-xs hover:bg-gray-600 transition">Report</button>
+        <button id="btn-lang" onclick="toggleLang()"
+          class="px-2 py-1.5 bg-gray-700 text-gray-300 rounded text-xs hover:bg-gray-600 transition">EN</button>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- TAB BAR                                                    -->
+    <!-- ======================================================== -->
+    <nav class="bg-card border-b border-border px-4 flex gap-1">
+      <button onclick="switchTab('alpha')" id="tab-alpha"
+        class="px-4 py-2 text-xs font-medium text-accent border-b-2 border-accent transition" data-i18n="tabAlpha">Alpha</button>
+      <button onclick="switchTab('security')" id="tab-security"
+        class="px-4 py-2 text-xs font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-300 transition" data-i18n="tabSecurity">Security</button>
+    </nav>
+
+    <!-- ======================================================== -->
+    <!-- ALPHA TAB                                                  -->
+    <!-- ======================================================== -->
+    <div id="panel-alpha">
+
+      <!-- Pipeline Bar -->
+      <div class="bg-card border-b border-border px-4 py-2">
+        <div class="flex items-center justify-center gap-2 text-sm">
+          <!-- Stage 1: Scan -->
+          <div class="flex items-center gap-1.5">
+            <span class="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-sm">&#x1F4E1;</span>
+            <span class="text-gray-400" data-i18n="pipeScan">Scan</span>
+            <span id="pipe-raw" class="text-white font-bold">0</span>
+          </div>
+          <span id="arrow-1" class="text-gray-600 text-xs">&rarr;</span>
+          <!-- Stage 2: Score -->
+          <div class="flex items-center gap-1.5">
+            <span class="w-7 h-7 rounded-full bg-yellow/20 flex items-center justify-center text-sm">&#x26A1;</span>
+            <span class="text-gray-400" data-i18n="pipeScore">Score</span>
+            <span id="pipe-qualified" class="text-white font-bold">0</span>
+          </div>
+          <span id="arrow-2" class="text-gray-600 text-xs">&rarr;</span>
+          <!-- Stage 3: Safety -->
+          <div class="flex items-center gap-1.5">
+            <span class="w-7 h-7 rounded-full bg-green/20 flex items-center justify-center text-sm">&#x1F6E1;&#xFE0F;</span>
+            <span class="text-gray-400" data-i18n="pipeSafety">Safety</span>
+            <span id="pipe-passed" class="text-white font-bold">0</span>
+          </div>
+          <span id="arrow-3" class="text-gray-600 text-xs">&rarr;</span>
+          <!-- Stage 4: Trade -->
+          <div class="flex items-center gap-1.5">
+            <span class="w-7 h-7 rounded-full bg-purple/20 flex items-center justify-center text-sm">&#x1F4B0;</span>
+            <span class="text-gray-400" data-i18n="pipeTrade">Trade</span>
+            <span id="pipe-traded" class="text-white font-bold">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scan Progress Bar (thin gradient) -->
+      <div class="h-0.5 bg-border">
+        <div id="scan-progress-bar" class="h-full w-0 scan-progress-animated transition-all duration-500"></div>
+      </div>
+
+      <!-- 3-Column Main Layout -->
+      <div id="main-columns" class="flex" style="height: calc(100vh - 175px);">
+
+        <!-- LEFT COLUMN (resizable): Wallet + Activity -->
+        <div id="left-col" class="bg-card border-r border-border flex flex-col" style="width:22%;min-width:220px;max-width:500px;flex-shrink:0;">
+          <!-- Wallet Card -->
+          <div class="p-3 border-b border-border">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-xs text-gray-500 uppercase tracking-wider" data-i18n="wallet">Wallet</div>
+              <div class="text-sm text-gray-600 px-1.5 py-0.5 rounded bg-bg border border-border" data-i18n="mainWallet">Main Wallet</div>
+            </div>
+            <div id="wallet-total" class="text-sm font-bold text-white">$0.00</div>
+            <div id="wallet-chains" class="text-xs text-gray-500 mt-1">—</div>
+          </div>
+          <!-- Activity Feed -->
+          <div class="flex-1 overflow-y-auto p-3">
+            <div class="text-xs text-gray-500 uppercase tracking-wider mb-2" data-i18n="activityFeed">Activity</div>
+            <div id="activity-feed" class="space-y-1.5">
+              <p class="text-gray-600 text-xs">No activity yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resize Handle -->
+        <div id="resize-handle" class="w-1 cursor-col-resize hover:bg-accent/30 active:bg-accent/50 transition flex-shrink-0"></div>
+
+        <!-- CENTER COLUMN (flex): Signal Cards -->
+        <div class="flex-1 overflow-y-auto p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-semibold text-white" data-i18n="liveSignals">Live Signals</h2>
+            <span id="signal-count" class="text-xs text-gray-500">0 signals</span>
+          </div>
+          <div id="signals-list" class="space-y-2">
+            <p class="text-gray-600 text-xs">No signals yet. Start scanning to discover alpha.</p>
+          </div>
+        </div>
+
+        <!-- Right Resize Handle -->
+        <div id="resize-handle-right" class="w-1 cursor-col-resize hover:bg-accent/30 active:bg-accent/50 transition flex-shrink-0"></div>
+
+        <!-- RIGHT COLUMN (resizable): Positions -->
+        <div id="right-col" class="bg-card border-l border-border flex flex-col overflow-y-auto" style="width:28%;min-width:260px;max-width:600px;flex-shrink:0;">
+          <!-- Active Positions -->
+          <div class="p-3 border-b border-border">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-xs text-gray-500 uppercase tracking-wider" data-i18n="positions">Active Positions</div>
+              <span class="text-xs text-gray-500">Unreal: <span id="unrealized-pnl" class="text-gray-400">$0.00</span></span>
+            </div>
+            <div class="text-sm text-gray-600 mb-2" data-i18n="subWalletNote">Trades in isolated sub-wallets (risk-separated)</div>
+            <div id="positions-active" class="space-y-1.5">
+              <p class="text-gray-600 text-xs">No active positions.</p>
+            </div>
+          </div>
+          <!-- Closed Trades -->
+          <div class="p-3 flex-1">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-xs text-gray-500 uppercase tracking-wider" data-i18n="closedTrades">Closed Trades</div>
+              <span class="text-xs text-gray-500">Real: <span id="realized-pnl" class="text-green">$0.00</span></span>
+            </div>
+            <div id="positions-closed" class="space-y-1.5">
+              <p class="text-gray-600 text-xs">No closed trades yet.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end 3-column -->
+
+      <!-- ======================================================== -->
+      <!-- x402 Bottom Bar (fixed at bottom)                        -->
+      <!-- ======================================================== -->
+      <div class="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-2 flex items-center justify-between gap-4 z-30">
+        <!-- Selling -->
+        <div class="flex items-center gap-2 text-sm">
+          <span id="sell-indicator" class="w-2 h-2 rounded-full bg-gray-600 inline-block"></span>
+          <span id="sell-status" class="text-gray-500">Offline</span>
+          <button id="btn-sell" onclick="toggleSell()"
+            class="px-2 py-1 bg-accent text-white rounded text-xs hover:bg-blue-600 transition">Start Selling</button>
+          <span class="text-gray-500 ml-1"><span data-i18n="income">Income</span>: <span id="x402-income" class="text-green font-medium">0 USDG</span></span>
+        </div>
+        <!-- Divider -->
+        <div class="h-4 border-l border-border"></div>
+        <!-- Buying / Subscription -->
+        <div class="flex items-center gap-2 text-sm flex-1">
+          <span class="text-gray-500"><span data-i18n="spend">Spend</span>: <span id="x402-spend" class="text-yellow font-medium">0 USDG</span></span>
+          <input id="sub-url" type="text" placeholder="http://localhost:8402/signals/latest"
+            class="flex-1 bg-bg border border-border rounded px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-accent"
+            onkeydown="if(event.key==='Enter')subscribe()">
+          <button id="btn-subscribe" onclick="subscribe()"
+            class="px-2 py-1 bg-accent text-white rounded text-xs hover:bg-blue-600 transition" data-i18n="subscribe">Subscribe</button>
+        </div>
+      </div>
+
+    </div><!-- end panel-alpha -->
+
+    <!-- ======================================================== -->
+    <!-- SECURITY TAB (hidden by default)                          -->
+    <!-- ======================================================== -->
+    <div id="panel-security" class="hidden p-4" style="height: calc(100vh - 90px); overflow-y: auto;">
+
+      <!-- Security Score Header -->
+      <div class="bg-card rounded-xl border border-border p-4 mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-semibold text-white" data-i18n="walletSecurity">Wallet Security</h2>
+            <p class="text-xs text-gray-500 mt-0.5" data-i18n="secDesc">Scan holdings for contract risks, honeypots, and dangerous approvals</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-center">
+              <div id="security-score" class="text-2xl font-bold text-gray-600">—</div>
+              <div class="text-xs text-gray-500" data-i18n="score">Score</div>
+            </div>
+            <button id="btn-scan" onclick="runSecurityScan()"
+              class="px-3 py-1.5 bg-accent text-white rounded text-xs hover:bg-blue-600 transition" data-i18n="scanNow">Scan Now</button>
+          </div>
+        </div>
+        <!-- Risk Summary: 3 boxes -->
+        <div class="grid grid-cols-3 gap-2">
+          <div class="bg-bg rounded-lg p-2 border border-border text-center">
+            <div id="risk-danger-count" class="text-lg font-bold text-red">0</div>
+            <div class="text-xs text-gray-500" data-i18n="highRisk">High Risk</div>
+          </div>
+          <div class="bg-bg rounded-lg p-2 border border-border text-center">
+            <div id="risk-warning-count" class="text-lg font-bold text-yellow">0</div>
+            <div class="text-xs text-gray-500" data-i18n="warning">Warning</div>
+          </div>
+          <div class="bg-bg rounded-lg p-2 border border-border text-center">
+            <div id="risk-safe-count" class="text-lg font-bold text-green">0</div>
+            <div class="text-xs text-gray-500" data-i18n="safe">Safe</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Token Risk Analysis -->
+      <div class="bg-card rounded-xl border border-border p-4 mb-4">
+        <h3 class="text-xs font-semibold text-white mb-2" data-i18n="tokenRisk">Token Risk Analysis</h3>
+        <div id="security-tokens" class="space-y-2">
+          <p class="text-gray-600 text-xs">Click "Scan Now" to analyze your holdings.</p>
+        </div>
+      </div>
+
+      <!-- Manual Token Scan -->
+      <div class="bg-card rounded-xl border border-border p-4">
+        <h3 class="text-xs font-semibold text-white mb-2" data-i18n="manualScan">Manual Token Scan</h3>
+        <div class="flex gap-2">
+          <select id="scan-chain"
+            class="bg-bg border border-border rounded px-2 py-1 text-sm text-gray-300 focus:outline-none focus:border-accent">
+            <option value="501">Solana</option>
+            <option value="1">Ethereum</option>
+            <option value="8453">Base</option>
+          </select>
+          <input id="scan-address" type="text" value="DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" placeholder="Token contract address"
+            class="flex-1 bg-bg border border-border rounded px-2 py-1 text-sm text-gray-300 focus:outline-none focus:border-accent"
+            onkeydown="if(event.key==='Enter')manualTokenScan()">
+          <button id="btn-manual-scan" onclick="manualTokenScan()"
+            class="px-3 py-1 bg-accent text-white rounded text-sm hover:bg-blue-600 transition">Scan</button>
+        </div>
+        <div id="manual-scan-result" class="mt-2 text-xs"></div>
+      </div>
+
+      <!-- Claude Code Plugin Skills -->
+      <div class="bg-card rounded-xl border border-border p-4 mt-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-semibold text-white" data-i18n="pluginSkills">Claude Code Plugin Skills</h3>
+          <span class="text-xs text-gray-500 bg-accent/10 text-accent px-2 py-0.5 rounded">8 skills</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-3" data-i18n="pluginDesc">Use these skills via Claude Code CLI for natural language interaction</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <!-- Alpha Skills -->
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">📡</span>
+              <span class="text-xs font-medium text-white">alpha-hunt</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-green/15 text-green">Alpha</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillAlphaHunt">Multi-source signal discovery + auto trading with 4-gate safety</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:alpha-hunt</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">💰</span>
+              <span class="text-xs font-medium text-white">alpha-sell</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-green/15 text-green">Alpha</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillAlphaSell">Sell alpha signals via x402 payment-gated marketplace</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:alpha-sell</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">🛒</span>
+              <span class="text-xs font-medium text-white">alpha-buy</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-green/15 text-green">Alpha</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillAlphaBuy">Subscribe to external x402 signals + auto-execute with safety</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:alpha-buy</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">🔒</span>
+              <span class="text-xs font-medium text-white">safe-trade</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-accent/15 text-accent">Trade</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillSafeTrade">4-gate security pipeline before every trade execution</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:safe-trade</code>
+          </div>
+          <!-- Security Skills -->
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">🛡️</span>
+              <span class="text-xs font-medium text-white">security-scan</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-yellow/15 text-yellow">Security</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillSecScan">5-dimension wallet security health check with risk scoring</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:security-scan</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">📊</span>
+              <span class="text-xs font-medium text-white">portfolio-guard</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-yellow/15 text-yellow">Security</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillPortfolio">Holdings risk monitor with auto-disposal for dangerous tokens</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:portfolio-guard</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">🔍</span>
+              <span class="text-xs font-medium text-white">multi-wallet-audit</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-yellow/15 text-yellow">Security</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillMultiWallet">Cross-wallet security audit with global risk aggregation</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:multi-wallet-audit</code>
+          </div>
+          <div class="bg-bg rounded-lg p-2.5 border border-border">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm">🏪</span>
+              <span class="text-xs font-medium text-white">security-service</span>
+              <span class="text-sm px-1.5 py-0.5 rounded bg-purple/15 text-purple">x402</span>
+            </div>
+            <p class="text-xs text-gray-500" data-i18n="skillSecService">Security-as-a-Service via x402 micropayments (sell/buy scans)</p>
+            <code class="text-sm text-gray-600 mt-1 block">/sentryx:security-service</code>
+          </div>
+        </div>
+      </div>
+    </div><!-- end panel-security -->
+
+    <!-- ======================================================== -->
+    <!-- CONFIG MODAL                                               -->
+    <!-- ======================================================== -->
+    <div id="config-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-40" onclick="if(event.target===this)closeModal()">
+      <div class="bg-card rounded-xl border border-border p-5 w-full max-w-md mx-4">
+        <h2 class="text-sm font-semibold text-white mb-4" data-i18n="strategyConfig">Strategy Configuration</h2>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-gray-400" data-i18n="chains">Chains</label>
+            <div class="flex gap-3 mt-1">
+              <label class="flex items-center gap-1.5 text-xs cursor-pointer">
+                <input type="checkbox" id="chain-501" checked class="rounded accent-accent"> Solana
+              </label>
+              <label class="flex items-center gap-1.5 text-xs cursor-pointer">
+                <input type="checkbox" id="chain-8453" checked class="rounded accent-accent"> Base
+              </label>
+              <label class="flex items-center gap-1.5 text-xs cursor-pointer">
+                <input type="checkbox" id="chain-1" class="rounded accent-accent"> Ethereum
+              </label>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-gray-400" data-i18n="positionSize">Position Size (USDT)</label>
+              <input id="cfg-position" type="number" value="5" min="0.1" max="50" step="0.1"
+                class="w-full bg-bg border border-border rounded px-3 py-1.5 mt-1 text-xs text-gray-300 focus:outline-none focus:border-accent">
+            </div>
+            <div>
+              <label class="text-xs text-gray-400" data-i18n="scanInterval">Scan Interval (sec)</label>
+              <input id="cfg-interval" type="number" value="30" min="10" max="300"
+                class="w-full bg-bg border border-border rounded px-3 py-1.5 mt-1 text-xs text-gray-300 focus:outline-none focus:border-accent">
+            </div>
+            <div>
+              <label class="text-xs text-gray-400" data-i18n="takeProfit">Take Profit (%)</label>
+              <input id="cfg-tp" type="number" value="50" min="10" max="500"
+                class="w-full bg-bg border border-border rounded px-3 py-1.5 mt-1 text-xs text-gray-300 focus:outline-none focus:border-accent">
+            </div>
+            <div>
+              <label class="text-xs text-gray-400" data-i18n="stopLoss">Stop Loss (%)</label>
+              <input id="cfg-sl" type="number" value="20" min="5" max="50"
+                class="w-full bg-bg border border-border rounded px-3 py-1.5 mt-1 text-xs text-gray-300 focus:outline-none focus:border-accent">
+            </div>
+          </div>
+          <div class="text-xs text-gray-600 mt-1" data-i18n="hardLimits">Hard limits: max 50 USDT/trade, 200 USDT/wallet, 1000 USDT total</div>
+        </div>
+        <div class="flex gap-3 mt-4">
+          <button id="btn-launch" onclick="confirmStart()"
+            class="flex-1 px-4 py-2 bg-accent text-white rounded-lg text-xs hover:bg-blue-600 transition" data-i18n="launch">Launch</button>
+          <button onclick="closeModal()"
+            class="flex-1 px-4 py-2 bg-gray-700 text-gray-300 rounded-lg text-xs hover:bg-gray-600 transition" data-i18n="cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- REPORT MODAL                                               -->
+    <!-- ======================================================== -->
+    <div id="report-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-40" onclick="if(event.target===this)closeReport()">
+      <div class="bg-card rounded-xl border border-border p-5 w-full max-w-lg mx-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-white" data-i18n="alphaReport">Alpha Hunt Report</h2>
+          <button onclick="closeReport()" class="text-gray-500 hover:text-white text-lg">&times;</button>
+        </div>
+        <div id="report-content" class="space-y-3 text-xs">
+          <p class="text-gray-500">Loading...</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end dashboard -->
+
+  <script src="app.js"></script>
+</body>
+</html>
