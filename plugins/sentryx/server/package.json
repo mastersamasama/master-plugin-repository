@@ -1,0 +1,10 @@
+{
+  "name": "sentryx-signal-server",
+  "version": "1.0.0",
+  "description": "x402 payment-gated signal selling server for SentryX",
+  "main": "signal-server.js",
+  "scripts": {
+    "start": "node signal-server.js"
+  },
+  "dependencies": {}
+}

@@ -92,6 +92,28 @@
         "url": "https://github.com/umiiii/onchain-arb.git",
         "sha": "1ac6a43436a1ef597ecfeb1dabab5d6ea16abefb"
       }
+    },
+    {
+      "name": "sentryx",
+      "description": "Your AI-Powered Onchain Security & Alpha Guardian — auto-scans approvals, detects rug pulls, guards your portfolio, trades safely, hunts alpha signals, and runs a bidirectional x402 signal marketplace across EVM and Solana via Onchain OS.",
+      "version": "2.0.0",
+      "author": {
+        "name": "sentryx-team"
+      },
+      "category": "other",
+      "keywords": [
+        "security",
+        "wallet",
+        "defi",
+        "onchain-os",
+        "agent",
+        "agentic-wallet",
+        "alpha",
+        "trading",
+        "x402",
+        "signals"
+      ],
+      "source": "./plugins/sentryx"
     }
   ]
 }
