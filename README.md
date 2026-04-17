@@ -107,7 +107,7 @@ A reviewer checks the PR template checkboxes (no secrets, license compliance, va
 Please zip my plugin directory into a file
 ```
 
-Claude will create a `.zip` for you. Then upload it (plus your Demo recording/link) to the [submission form]((provided by organizers)). That's it — no GitHub account, no PR, no `gh` CLI.
+Claude will create a `.zip` for you. Then upload it (plus your Demo recording/link) to the submission form (link provided by organizers). That's it — no GitHub account, no PR, no `gh` CLI.
 
 **What the zip must contain:**
 - `README.md` that mentions your project name and explains how to run it

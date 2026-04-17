@@ -23,7 +23,7 @@ check all my wallets
 系统调用 `wallet status` 确认钱包已登录，并记录当前活跃钱包作为原始钱包（审计结束后会切回）。
 
 **本次结果：**
-- 已登录: team@example.com
+- 已登录: user@example.com
 - 当前钱包: Account 1 (`d10c5771-3cb3-4684-99ab-b258a9632f57`)
 
 ---

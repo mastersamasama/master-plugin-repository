@@ -158,8 +158,7 @@ If participant picks **Zip upload**:
    ```
    Your plugin is zipped at: <path-to-zip>
 
-   Upload it to the submission form:
-   (provided by organizers)
+   Upload it to the submission form (link provided by organizers).
 
    Don't forget to also upload your Demo (screen recording or online link)!
    ```
