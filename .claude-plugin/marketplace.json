@@ -132,11 +132,9 @@
         "onchain"
       ],
       "source": {
-        "source": "git-subdir",
+        "source": "url",
         "url": "https://github.com/PAtrickpp33/Xiake-onchain.git",
-        "path": "xiake",
-        "ref": "master",
-        "sha": "488cd88a1574c718330e81e6359ff5885bf87997"
+        "sha": "b27f1714cc0d9442d6d14161448ecc6c26f593f4"
       }
     }
   ]
