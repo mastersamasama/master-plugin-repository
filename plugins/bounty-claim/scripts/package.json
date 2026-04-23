@@ -1,0 +1,11 @@
+{
+  "name": "bountyclaim",
+  "version": "1.0.0",
+  "description": "Automated open-source bounty settlement — PR merged → USDC in your wallet via OKX Onchain OS",
+  "scripts": {
+    "postinstall": "pip install -r requirements.txt",
+    "start": "python main.py"
+  },
+  "keywords": ["bounty", "usdc", "onchain-os", "base", "github"],
+  "license": "MIT"
+}

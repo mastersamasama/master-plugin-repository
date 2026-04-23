@@ -136,6 +136,26 @@
         "url": "https://github.com/PAtrickpp33/Xiake-onchain.git",
         "sha": "b27f1714cc0d9442d6d14161448ecc6c26f593f4"
       }
+    },
+    {
+      "name": "bounty-claim",
+      "description": "Automated open-source bounty settlement agent. Verifies a GitHub PR is merged, confirms wallet address from the PR author's own comment, and triggers instant USDC payment on Base via OKX Onchain OS.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cloriskitty"
+      },
+      "category": "productivity",
+      "keywords": [
+        "bounty",
+        "github",
+        "usdc",
+        "onchain-os",
+        "open-source",
+        "payments",
+        "base",
+        "defi"
+      ],
+      "source": "./plugins/bounty-claim"
     }
   ]
 }

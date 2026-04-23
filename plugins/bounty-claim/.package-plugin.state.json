@@ -1,0 +1,14 @@
+{
+  "phase": "validated",
+  "metadata": {
+    "name": "bounty-claim",
+    "version": "1.0.0",
+    "description": "Automated open-source bounty settlement agent. Verifies a GitHub PR is merged, confirms wallet address from the PR author's own comment, and triggers instant USDC payment on Base via OKX Onchain OS.",
+    "author_name": "Qinghe Zhang",
+    "author_email": "clorrrisz@gmail.com",
+    "category": "productivity",
+    "keywords": ["bounty", "github", "usdc", "onchain-os", "open-source", "payments", "base", "defi"],
+    "target": "/Users/xueyang/bountyclaim-plugin/bounty-claim"
+  },
+  "selected_inputs": ["skill_directories", "agent_definitions", "supporting_scripts"]
+}

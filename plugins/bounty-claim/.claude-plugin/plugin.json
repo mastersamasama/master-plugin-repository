@@ -1,0 +1,13 @@
+{
+  "name": "bounty-claim",
+  "version": "1.0.0",
+  "description": "Automated open-source bounty settlement agent. Verifies a GitHub PR is merged, confirms wallet address from the PR author's own comment, and triggers instant USDC payment on Base via OKX Onchain OS — no bank account, no manual review, no waiting.",
+  "author": {
+    "name": "Cloriskitty"
+  },
+  "homepage": "https://github.com/Cloriskitty/BountyClaim",
+  "repository": "https://github.com/Cloriskitty/BountyClaim",
+  "license": "MIT",
+  "keywords": ["bounty", "github", "usdc", "onchain-os", "open-source", "payments", "base", "defi"],
+  "category": "productivity"
+}
