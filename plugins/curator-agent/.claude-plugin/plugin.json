@@ -1,0 +1,14 @@
+{
+  "name": "curator-agent",
+  "version": "0.1.0",
+  "description": "Turn any agent into a professional DeFi curator — continuously auto-rebalances yield positions across vaults and pools for optimal APY, settled on-chain via OKX Agentic Wallet.",
+  "author": {
+    "name": "AlphaYield",
+    "email": "youjunchen000220@gmail.com"
+  },
+  "homepage": "https://alpha-yield.com/",
+  "repository": "https://github.com/jasonthewhale/alpha-yield",
+  "license": "See LICENSE",
+  "keywords": ["okx", "hackathon", "defi", "yield", "rebalance", "curator", "base", "agentic-wallet"],
+  "category": "productivity"
+}
