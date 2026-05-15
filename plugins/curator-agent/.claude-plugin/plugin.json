@@ -6,8 +6,8 @@
     "name": "AlphaYield",
     "email": "youjunchen000220@gmail.com"
   },
-  "homepage": "",
-  "repository": "",
+  "homepage": "https://alpha-yield.com/",
+  "repository": "https://github.com/jasonthewhale/alpha-yield",
   "license": "See LICENSE",
   "keywords": ["okx", "hackathon", "defi", "yield", "rebalance", "curator", "base", "agentic-wallet"],
   "category": "productivity"

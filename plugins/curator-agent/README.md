@@ -2,6 +2,8 @@
 
 Turn any agent into a professional DeFi curator — continuously auto-rebalances yield positions across vaults and pools for optimal APY, settled on-chain via OKX Agentic Wallet.
 
+**Website:** https://alpha-yield.com/
+
 ## What's inside
 
 - **Skill**: `curator-agent` — fetches optimal rebalance actions from a curator optimizer API and executes them sequentially on-chain via OKX Agentic Wallet. Supports one-shot, loop (continuous auto-rebalance), and full-withdrawal modes.
