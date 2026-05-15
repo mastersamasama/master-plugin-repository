@@ -156,6 +156,23 @@
         "defi"
       ],
       "source": "./plugins/bounty-claim"
+    },
+    {
+      "name": "weclaude",
+      "description": "Claude API at 90% off for buyers; sellers earn by sharing idle Claude Code capacity — settled on xlayer via x402.",
+      "version": "2.2.0",
+      "author": {
+        "name": "WeClaude"
+      },
+      "category": "productivity",
+      "keywords": [
+        "okx",
+        "hackathon",
+        "claude-api",
+        "x402",
+        "xlayer"
+      ],
+      "source": "./plugins/weclaude"
     }
   ]
 }

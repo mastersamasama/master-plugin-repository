@@ -1,0 +1,14 @@
+{
+  "name": "weclaude",
+  "version": "2.2.0",
+  "description": "Claude API at 90% off for buyers; sellers earn by sharing idle Claude Code capacity — settled on xlayer via x402.",
+  "author": {
+    "name": "WeClaude",
+    "email": "youjunchen000220@gmail.com"
+  },
+  "homepage": "https://weclaude.cc",
+  "repository": "",
+  "license": "See LICENSE",
+  "keywords": ["okx","hackathon","claude-api","x402","xlayer"],
+  "category": "productivity"
+}
