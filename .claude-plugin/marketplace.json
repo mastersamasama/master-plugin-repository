@@ -156,6 +156,20 @@
         "defi"
       ],
       "source": "./plugins/bounty-claim"
+    },
+    {
+      "name": "x-social",
+      "description": "Privacy social platform with ZK face verification, AI matchmaking, and privacy payments on OKX X Layer",
+      "version": "0.1.0",
+      "author": {
+        "name": "erick-okkk"
+      },
+      "category": "development",
+      "keywords": [
+        "okx",
+        "hackathon"
+      ],
+      "source": "./plugins/x-social"
     }
   ]
 }
