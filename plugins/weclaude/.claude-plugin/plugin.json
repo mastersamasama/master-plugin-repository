@@ -7,7 +7,7 @@
     "email": "youjunchen000220@gmail.com"
   },
   "homepage": "https://weclaude.cc",
-  "repository": "",
+  "repository": "https://github.com/jasonthewhale/weclaude",
   "license": "See LICENSE",
   "keywords": ["okx","hackathon","claude-api","x402","xlayer"],
   "category": "productivity"
