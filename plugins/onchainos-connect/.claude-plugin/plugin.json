@@ -1,0 +1,14 @@
+{
+  "name": "onchainos-connect",
+  "version": "0.1.0",
+  "description": "Pair Onchain OS with any WalletConnect-enabled dApp via a headless local daemon — connect, disconnect, list active sessions, check status, stop.",
+  "author": {
+    "name": "OnchainOS Connect",
+    "email": "youjunchen000220@gmail.com"
+  },
+  "homepage": "https://onchainosconnect.com/",
+  "repository": "https://github.com/jasonthewhale/onchainos-connect",
+  "license": "See LICENSE",
+  "keywords": ["okx", "hackathon", "walletconnect", "onchainos", "wallet", "dapp", "reown"],
+  "category": "productivity"
+}

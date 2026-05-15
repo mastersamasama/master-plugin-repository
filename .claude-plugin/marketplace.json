@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "official-plugins",
-      "description": "Official OKX hackathon tools — package any combination of skills, commands, agents, hooks, scripts, or MCP configs into a Claude Code plugin and submit it to this marketplace",
+      "description": "Official OKX hackathon tools \u2014 package any combination of skills, commands, agents, hooks, scripts, or MCP configs into a Claude Code plugin and submit it to this marketplace",
       "version": "0.1.0",
       "author": {
         "name": "mastersamasama"
@@ -27,7 +27,7 @@
     },
     {
       "name": "onchain-redpacket",
-      "description": "Onchain red packet agent — create USDC/OKB/SOL red packets on XLayer & Solana and share via link, powered by OKX Agentic Wallet",
+      "description": "Onchain red packet agent \u2014 create USDC/OKB/SOL red packets on XLayer & Solana and share via link, powered by OKX Agentic Wallet",
       "version": "1.0.1",
       "author": {
         "name": "oker"
@@ -51,7 +51,7 @@
     },
     {
       "name": "doraemon",
-      "description": "Decentralized AI gateway — access 18 frontier models (Claude, GPT-4o, Gemini, DeepSeek, Grok, and more) by paying in USDG on X Layer. No API keys, no accounts, no geo-restrictions.",
+      "description": "Decentralized AI gateway \u2014 access 18 frontier models (Claude, GPT-4o, Gemini, DeepSeek, Grok, and more) by paying in USDG on X Layer. No API keys, no accounts, no geo-restrictions.",
       "version": "1.0.0",
       "author": {
         "name": "YunanL"
@@ -95,7 +95,7 @@
     },
     {
       "name": "sentryx",
-      "description": "Your AI-Powered Onchain Security & Alpha Guardian — auto-scans approvals, detects rug pulls, guards your portfolio, trades safely, hunts alpha signals, and runs a bidirectional x402 signal marketplace across EVM and Solana via Onchain OS.",
+      "description": "Your AI-Powered Onchain Security & Alpha Guardian \u2014 auto-scans approvals, detects rug pulls, guards your portfolio, trades safely, hunts alpha signals, and runs a bidirectional x402 signal marketplace across EVM and Solana via Onchain OS.",
       "version": "2.0.0",
       "author": {
         "name": "sentryx-team"
@@ -117,7 +117,7 @@
     },
     {
       "name": "xiake",
-      "description": "侠客擂台 — AI-native wuxia 3v3 chain game with 7 schools, 12 stages, PVP arena, gacha economy",
+      "description": "\u4fa0\u5ba2\u64c2\u53f0 \u2014 AI-native wuxia 3v3 chain game with 7 schools, 12 stages, PVP arena, gacha economy",
       "version": "0.1.0",
       "author": {
         "name": "PAtrickpp33"
@@ -156,6 +156,25 @@
         "defi"
       ],
       "source": "./plugins/bounty-claim"
+    },
+    {
+      "name": "onchainos-connect",
+      "description": "Pair Onchain OS with any WalletConnect-enabled dApp via a headless local daemon \u2014 connect, disconnect, list active sessions, check status, stop.",
+      "version": "0.1.0",
+      "author": {
+        "name": "OnchainOS Connect"
+      },
+      "category": "productivity",
+      "keywords": [
+        "okx",
+        "hackathon",
+        "walletconnect",
+        "onchainos",
+        "wallet",
+        "dapp",
+        "reown"
+      ],
+      "source": "./plugins/onchainos-connect"
     }
   ]
 }
